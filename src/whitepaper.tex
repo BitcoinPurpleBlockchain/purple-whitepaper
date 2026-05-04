@@ -1,0 +1,963 @@
+% =============================================================================
+%  BitcoinPurple Whitepaper
+%  Founded by: Alym Wehrli
+%  Maintained by: Davide Grilli, Maurito83
+% =============================================================================
+\documentclass[12pt, a4paper]{article}
+
+% ---------- Encoding & fonts -------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% ---------- Page layout ------------------------------------------------------
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.8cm, right=2.8cm, headheight=14pt]{geometry}
+\usepackage{fancyhdr}
+\usepackage{emptypage}
+
+% ---------- Math & symbols ---------------------------------------------------
+\usepackage{amsmath, amssymb}
+\usepackage{textcomp}
+
+% ---------- Graphics & colour ------------------------------------------------
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+% ---------- Tables -----------------------------------------------------------
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{tabularx}
+
+% ---------- Lists & misc -----------------------------------------------------
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{setspace}
+\usepackage{seqsplit}
+
+% ---------- Code blocks ------------------------------------------------------
+\usepackage{listings}
+\usepackage{courier}
+
+% ---------- Hyperlinks -------------------------------------------------------
+\usepackage[
+  colorlinks = true,
+  linkcolor  = purplebtcp,
+  urlcolor   = purplebtcp,
+  citecolor  = purplebtcp,
+  pdftitle   = {BitcoinPurple Whitepaper},
+  pdfauthor  = {Alym Wehrli (founder); Davide Grilli (developer and maintainer); Maurito83 (community manager)},
+]{hyperref}
+
+% ---------- Section formatting -----------------------------------------------
+\usepackage{titlesec}
+
+% =============================================================================
+%  Colour palette
+% =============================================================================
+\definecolor{purplebtcp}{RGB}{102, 0, 153}       % main purple
+\definecolor{purpledark}{RGB}{60,  0, 100}        % darker shade
+\definecolor{purplelight}{RGB}{220, 180, 255}     % light tint
+\definecolor{codebg}{RGB}{245, 242, 250}          % code background
+
+% =============================================================================
+%  Section styling
+% =============================================================================
+\titleformat{\section}
+  {\Large\bfseries\color{purplebtcp}}
+  {\thesection}{1em}{}[\color{purplebtcp}\titlerule]
+
+\titleformat{\subsection}
+  {\large\bfseries\color{purpledark}}
+  {\thesubsection}{1em}{}
+
+\titleformat{\subsubsection}
+  {\normalsize\bfseries\color{purpledark}}
+  {\thesubsubsection}{1em}{}
+
+% =============================================================================
+%  Code listing style
+% =============================================================================
+\lstset{
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  framerule=0.4pt,
+  rulecolor=\color{purplebtcp},
+  keywordstyle=\color{purplebtcp}\bfseries,
+  commentstyle=\color{gray},
+  stringstyle=\color{purpledark},
+  numbers=none,
+  xleftmargin=6pt,
+  xrightmargin=6pt,
+  aboveskip=8pt,
+  belowskip=8pt,
+}
+
+% =============================================================================
+%  Header / footer
+% =============================================================================
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{purplebtcp}\leaders\hrule height \headrulewidth\hfill}}
+\fancyhead[L]{\small\color{purpledark}\textbf{BitcoinPurple} \textemdash\ Whitepaper}
+\fancyhead[R]{\small\color{purpledark}May 2026}
+\fancyfoot[C]{\small\color{gray}\thepage}
+
+% =============================================================================
+%  Helper: purple horizontal rule
+% =============================================================================
+\newcommand{\purplerule}{%
+  {\color{purplebtcp}\rule{\textwidth}{0.8pt}}}
+
+
+% =============================================================================
+\begin{document}
+% =============================================================================
+
+% -----------------------------------------------------------------------------
+%  TITLE PAGE
+% -----------------------------------------------------------------------------
+\begin{titlepage}
+\pagecolor{purplebtcp}
+\color{white}
+\centering
+\vspace*{1.5cm}
+
+% Logo
+\includegraphics[width=4.5cm]{icon.png}
+
+\vspace{1.0cm}
+{\fontsize{38}{44}\selectfont\bfseries\sffamily BitcoinPurple}\\[0.4cm]
+{\Large\sffamily A Peer-to-Peer Electronic Cash System}\\[0.2cm]
+{\large\sffamily Ticker: \textbf{BTCP}}
+
+\vspace{1.0cm}
+{\color{white}\noindent\rule{\textwidth}{0.8pt}}\\[2pt]
+{\color{white}\noindent\rule{\textwidth}{0.8pt}}
+
+\vspace{0.8cm}
+{\normalsize Founded by \large\textbf{Alym Wehrli}}\\[0.3cm]
+{\normalsize Maintained by \large Davide Grilli,\ Maurito83}\\[0.3cm]
+{\normalsize Originally launched: \textbf{4 August 2023}}\\[0.2cm]
+{\normalsize May 2026}
+
+\vspace{1.2cm}
+\begin{tabular}{rl}
+  \textbf{Website:}   & \texttt{bitcoinpurpleblockchain.com}\\[4pt]
+  \textbf{Explorer:}  & \texttt{bitcoinpurple-explorer.online}\\[4pt]
+  \textbf{Community:} & Telegram \texttt{t.me/+o3I0A1q1W29mMmQ0}\\
+\end{tabular}
+
+\vfill
+{\small\itshape
+  This document is provided for informational purposes only.\\
+  BitcoinPurple is an open-source project; nothing herein constitutes
+  financial advice or an offer of securities.}
+\end{titlepage}
+\nopagecolor
+\pagecolor{white}
+
+% -----------------------------------------------------------------------------
+%  TABLE OF CONTENTS
+% -----------------------------------------------------------------------------
+\tableofcontents
+\thispagestyle{empty}
+\newpage
+
+% =============================================================================
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+% =============================================================================
+
+BitcoinPurple (BTCP) is a decentralised peer-to-peer digital currency designed
+to enable fast, low-cost, censorship-resistant transactions without reliance on
+intermediaries or central authorities.  Derived directly from the Bitcoin Core
+codebase, BitcoinPurple retains Bitcoin's battle-tested SHA-256d proof-of-work
+consensus, its UTXO model, and its full suite of modern script capabilities
+(SegWit, Taproot), while introducing three key refinements:
+
+\begin{itemize}[noitemsep]
+  \item \textbf{1-minute block interval} — ten times faster confirmations than
+        Bitcoin.
+  \item \textbf{120-block difficulty retarget} (\(\approx\)2\,h) — rapid
+        hashrate-responsive adjustment with a 4$\times$ change ceiling per epoch.
+  \item \textbf{Strict monetary cap of 1\,000\,000 BTCP} — all soft-forks
+        (including Taproot) active from genesis; Lightning Network support built
+        in from the start.
+\end{itemize}
+
+BitcoinPurple launched with no premine on 4 August 2023.  The initial block
+reward is 1 BTCP, halving every 500\,000 blocks, yielding an asymptotic supply
+of \(\approx\)1\,000\,000 BTCP.  Infrastructure development is ongoing, with a
+dedicated Electrum SPV wallet and a Lightning Network node implementation on the
+near-term roadmap.
+
+\newpage
+% =============================================================================
+\section{Introduction}
+% =============================================================================
+
+Since the publication of the Bitcoin whitepaper in 2008, blockchain-based
+digital currencies have established that peer-to-peer electronic cash is not
+only theoretically sound but practically deployable at scale.  Bitcoin remains
+the gold standard for security and decentralisation; however, its 10-minute
+block interval and comparatively slow difficulty adjustment make it sub-optimal
+for everyday micropayments and high-frequency retail use.
+
+BitcoinPurple addresses this gap without sacrificing Bitcoin's proven security
+model.  By shortening the block interval to 60 seconds and tightening the
+difficulty-adjustment window to 120 blocks (\(\approx\)2 hours), the network
+achieves a user experience comparable to traditional payment processors while
+remaining fully permissionless and censorship-resistant.
+
+The project was founded by \textbf{Alym Wehrli} and launched with a public
+genesis block on \textbf{4 August 2023}.  It is currently maintained and
+developed by \textbf{Davide Grilli} and \textbf{Maurito83}.  The codebase
+is a fork of Bitcoin Core, meaning that security improvements and protocol
+upgrades from the upstream Bitcoin ecosystem can be integrated with minimal
+friction.  All modern Bitcoin soft-forks — SegWit, CSV, CLTV, and Taproot — are
+active from block 0, providing a clean slate for second-layer development.
+
+\subsection{Design Principles}
+
+\begin{enumerate}[leftmargin=*, label=\textbf{\arabic*.}]
+  \item \textbf{Bitcoin-compatible security} — SHA-256d PoW means BTCP is
+        mineable with the same ASIC hardware as Bitcoin, lowering the barrier
+        to participation.
+  \item \textbf{Speed} — 1-minute blocks reduce median confirmation latency
+        from \(\approx\)5 minutes (Bitcoin) to \(\approx\)30 seconds.
+  \item \textbf{Scarcity} — a hard cap of 1\,000\,000 BTCP mirrors Bitcoin's
+        deflationary model at a more accessible nominal unit price.
+  \item \textbf{Fairness} — no premine; distribution begins from the genesis
+        coinbase.
+  \item \textbf{Futureproofing} — native Taproot and Lightning support enable
+        privacy, smart contracts, and instant off-chain payments from day one.
+\end{enumerate}
+
+\newpage
+% =============================================================================
+\section{Technical Architecture}
+% =============================================================================
+
+\subsection{Proof-of-Work Algorithm}
+
+BitcoinPurple uses \textbf{SHA-256d} (double SHA-256), identical to Bitcoin.
+This choice was deliberate:
+
+\begin{itemize}[noitemsep]
+  \item Existing SHA-256 ASIC miners can mine BTCP without hardware
+        modification.
+  \item The algorithm has been subject to over a decade of cryptanalysis
+        with no known weaknesses at the current security margin.
+  \item Mining pools and firmware developed for Bitcoin are compatible after
+        a simple RPC endpoint change.
+\end{itemize}
+
+The mainnet PoW target (difficulty-1 limit) is:
+
+\begin{center}
+{\small\ttfamily\seqsplit{00000fffffffffffffffffffffffffffffffffffffffffffffffffffffff}}
+\end{center}
+
+\subsection{Block Parameters}
+
+\begin{table}[h!]
+\centering
+\caption{Core consensus parameters}
+\small
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} & \textbf{Note} \\
+\midrule
+Block interval (\texttt{nPowTargetSpacing}) & 60 s & 10$\times$ faster than Bitcoin \\
+Difficulty retarget window  & 120 blocks     & $\approx$ 2 hours \\
+PoW target timespan         & 7\,200 s       & 120 $\times$ 60 s \\
+Max adjustment per retarget & $\pm$4$\times$ & clamped to [1\,800\,s, 28\,800\,s] \\
+Coinbase maturity           & 100 blocks     & $\approx$ 100 minutes \\
+Rule-change activation threshold & 108/120 blocks & 90\% \\
+Protocol version            & 70016          & Bitcoin Core-compatible \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Difficulty Adjustment}
+
+BTCP retargets difficulty at every block height $H$ where $H \bmod 120 = 0$.
+The algorithm is identical to Bitcoin's, but operating on a 120-block window
+rather than 2016 blocks:
+
+\[
+  T_{\text{new}} = T_{\text{old}}
+    \times \frac{t_{\text{clamped}}}{7200},
+  \qquad
+  t_{\text{clamped}} = \mathrm{clamp}(\text{actual\_timespan},\;1800,\;28800)\,\text{s}
+\]
+
+\[
+  T_{\text{new}} = \min\!\left(T_{\text{new}},\; T_{\text{limit}}\right)
+\]
+
+This design means:
+\begin{itemize}[noitemsep]
+  \item Blocks produced faster than 60 s increase difficulty.
+  \item Blocks produced slower than 60 s decrease difficulty.
+  \item A single epoch can never move difficulty by more than a factor of 4.
+\end{itemize}
+
+The short retarget window provides rapid response to large hashrate changes
+— a critical property for a young network where mining participation may be
+volatile.
+
+\subsection{Emission Schedule}
+
+The total monetary supply is capped at \textbf{1\,000\,000 BTCP}.  Emission
+follows a halving schedule anchored at every 500\,000 blocks:
+
+\begin{table}[h!]
+\centering
+\caption{Block reward schedule}
+\begin{tabular}{@{}ccrrl@{}}
+\toprule
+\textbf{Era} & \textbf{Block range} & \textbf{Reward} & \textbf{Era total} & \textbf{Cumulative} \\
+\midrule
+0 & 0 – 499\,999       & 1.00000000 BTCP & 500\,000 BTCP  & 500\,000 BTCP \\
+1 & 500\,000 – 999\,999    & 0.50000000 BTCP & 250\,000 BTCP  & 750\,000 BTCP \\
+2 & 1\,000\,000 – 1\,499\,999 & 0.25000000 BTCP & 125\,000 BTCP  & 875\,000 BTCP \\
+3 & 1\,500\,000 – 1\,999\,999 & 0.12500000 BTCP & 62\,500 BTCP   & 937\,500 BTCP \\
+$\vdots$ & $\vdots$        & $\vdots$        & $\vdots$       & $\vdots$      \\
+$\infty$ & —              & $\to 0$         & $\to 0$        & $\approx$ 1\,000\,000 BTCP \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Note on spendable supply:} The genesis coinbase (1 BTCP) follows
+standard construction but, as in Bitcoin Core-derived chains, it is not
+spendable from the UTXO set.  The maximum spendable subsidy therefore
+asymptotically approaches \(\approx\)999\,999 BTCP.
+
+\newpage
+\subsection{Address Formats and Encoding}
+
+\begin{table}[h!]
+\centering
+\caption{Address encoding — Mainnet}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Type}        & \textbf{Prefix byte} & \textbf{Base58 prefix} & \textbf{Bech32 HRP} \\
+\midrule
+P2PKH (legacy)       & 56 (\texttt{0x38})  & \texttt{P}             & — \\
+P2SH                 & 55 (\texttt{0x37})  & \texttt{P}             & — \\
+P2WPKH / P2WSH       & —                   & —                      & \texttt{btcp1\ldots} \\
+P2TR (Taproot)       & —                   & —                      & \texttt{btcp1p\ldots} \\
+WIF (private key)    & 183 (\texttt{0xb7}) & —                      & — \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{HD key version bytes — Mainnet (BIP32 / SLIP-0132)}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Script type} & \textbf{xpub prefix} & \textbf{xprv prefix} & \textbf{Base58 header} \\
+\midrule
+Standard (P2PKH)    & \texttt{0488B21E} & \texttt{0488ADE4} & \texttt{xpub} / \texttt{xprv} \\
+P2WPKH-P2SH (BIP49) & \texttt{049D7CB2} & \texttt{049D7878} & \texttt{ypub} / \texttt{yprv} \\
+P2WPKH (BIP84)      & \texttt{04B24746} & \texttt{04B2430C} & \texttt{zpub} / \texttt{zprv} \\
+P2TR (BIP86)        & \texttt{0488B21E} & \texttt{0488ADE4} & \texttt{xpub} / \texttt{xprv} + path \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Soft-Fork Activation}
+
+All soft-forks are active from genesis (block 0), providing a clean protocol
+baseline with no legacy upgrade paths to maintain:
+
+\begin{table}[h!]
+\centering
+\caption{Active soft-forks from genesis}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{BIP(s)} & \textbf{Feature} & \textbf{Activation height} \\
+\midrule
+BIP34               & Block height in coinbase         & 0 \\
+BIP65               & \texttt{CHECKLOCKTIMEVERIFY}     & 0 \\
+BIP66               & Strict DER signatures            & 0 \\
+BIP68/112/113       & \texttt{CheckSequenceVerify} (CSV) & 0 \\
+BIP141/143/147      & Segregated Witness (SegWit)      & 0 \\
+BIP340-342          & Taproot / Schnorr / Tapscript    & 0 (\texttt{ALWAYS\_ACTIVE}) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Genesis Block}
+
+\begin{table}[h!]
+\centering
+\caption{Genesis block parameters}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Field} & \textbf{Value} \\
+\midrule
+Timestamp (UTC) & 2023-08-04T05:27:12Z \\
+Unix timestamp  & 1691126832 \\
+Hash (display)  & \texttt{000003823fbf82ea\ldots c015} \\
+Merkle root     & \texttt{b5f46757618a0aa2\ldots 0a05} \\
+nBits           & \texttt{1e0ffff0} \\
+Nonce           & 1\,302\,816 (\texttt{0x13E120}) \\
+Version         & 1 \\
+Coinbase message & \textit{``Global transactions for everyone around the world''} \\
+LN chain\_hash (wire) & \texttt{15c04ef0bc1856d6\ldots 0000} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\newpage
+% =============================================================================
+\section{Network Infrastructure}
+% =============================================================================
+
+\subsection{Node Software}
+
+The BitcoinPurple full-node daemon is \textbf{\texttt{bitcoinpurpled}} (version
+1.1.1), a Bitcoin Core fork with BTCP-specific consensus parameters.  The
+companion CLI tool is \texttt{bitcoinpurple-cli}.  Configuration is stored at
+\texttt{\textasciitilde/.bitcoin\allowbreak purple/bitcoin\allowbreak purple.conf}.
+
+\begin{table}[h!]
+\centering
+\caption{Network ports}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Service} & \textbf{Mainnet} & \textbf{Testnet} & \textbf{Signet} & \textbf{Regtest} \\
+\midrule
+P2P               & 13496 & 23496 & 33496 & 18444 \\
+RPC               & 13495 & 23495 & 33495 & 18443 \\
+ElectrumX TCP     & 50001 & 60001 & —     & — \\
+ElectrumX SSL/TLS & 50002 & 60002 & —     & — \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Network identity bytes}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Mainnet} & \textbf{Regtest} \\
+\midrule
+Magic bytes (P2P) & \texttt{fc 99 13 95} & \texttt{31 34 6a c9} \\
+Bech32 / BOLT11 HRP & \texttt{btcp} & \texttt{rbtcp} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{ElectrumX Server}
+
+BitcoinPurple ships a coin-definition patch for the
+\href{https://github.com/spesmilo/electrumx}{ElectrumX} indexing server.
+The patch adds a \texttt{BitcoinPurple} class to
+\texttt{electrumx/lib/coins.py}, enabling full UTXO-history indexing and the
+standard Electrum protocol (version 1.4.2).
+
+Key ElectrumX parameters:
+
+\begin{table}[h!]
+\centering
+\caption{ElectrumX coin parameters}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+\texttt{COIN} & \texttt{BitcoinPurple} \\
+\texttt{GENESIS\_HASH} & \texttt{000003823fbf82ea\ldots c015} \\
+\texttt{SEGWIT\_HRP}   & \texttt{btcp} \\
+\texttt{RPC\_PORT}     & 13495 \\
+\texttt{REORG\_LIMIT}  & 1\,200 blocks \\
+\texttt{MIN\_REQUIRED\_DAEMON\_VERSION} & 1.1.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The ElectrumX node requires the full node to run with \texttt{txindex=1} and
+pruning disabled.  SSL/TLS service on port 50002 is recommended for public
+deployments.
+
+\newpage
+% =============================================================================
+\section{Lightning Network}
+% =============================================================================
+
+BitcoinPurple's 1-minute block time and native Taproot support make it
+technically well-suited for Lightning Network (LN) payment channels.  An
+LN implementation for BTCP is on the project roadmap (see Section~\ref{sec:roadmap}).
+
+\subsection{Chain Identification (BOLT1)}
+
+Every LN message that references a specific chain carries a \texttt{chain\_hash}
+— the genesis block hash in wire byte order (little-endian):
+
+\begin{table}[h!]
+\centering
+\caption{LN chain identification}
+\begin{tabular}{@{}lp{9cm}@{}}
+\toprule
+\textbf{Network} & \textbf{chain\_hash (BOLT1 wire)} \\
+\midrule
+Mainnet & {\small\ttfamily\seqsplit{15c04ef0bc1856d6b1ec199ca25d0aa7e77c6114e2cb0649ea82bf3f82030000}} \\
+Testnet & {\small\ttfamily\seqsplit{98d9f92e8867ee945d5aab422bd49896497f58cc6f8168d31a1c92c3fd020000}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{BOLT11 Invoice Prefix}
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Network} & \textbf{HRP} & \textbf{Example prefix} \\
+\midrule
+Mainnet & \texttt{btcp}  & \texttt{lnbtcp1\ldots} \\
+Testnet & \texttt{tbtcp} & \texttt{lntbtcp1\ldots} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Block-Time-Scaled Timeout Parameters}
+
+\textbf{This is the most safety-critical aspect of LN on BTCP.}
+Because BTCP has 1-minute blocks (vs Bitcoin's 10-minute blocks), all
+block-count-based LN timeouts \emph{must} be scaled by a factor of \(\times 10\)
+to maintain the same real-world security windows:
+
+\begin{table}[h!]
+\centering
+\caption{Recommended LN timeout parameters for BTCP}
+\small
+\begin{tabular}{@{}lrrl@{}}
+\toprule
+\textbf{Parameter} & \textbf{Bitcoin} & \textbf{BTCP} & \textbf{Wall-clock} \\
+\midrule
+\texttt{to\_self\_delay} (justice window)         & 144 blocks & \textbf{1\,440 blocks} & $\approx$ 24 h \\
+\texttt{cltv\_expiry\_delta} per hop              &  40 blocks & \textbf{400 blocks}   & $\approx$ 6.7 h \\
+\texttt{min\_final\_cltv\_expiry\_delta}          &   9 blocks & \textbf{90 blocks}    & $\approx$ 90 min \\
+Max remote \texttt{to\_self\_delay}               & 2\,016 blocks & \textbf{20\,160 blocks} & $\approx$ 14 days \\
+\texttt{max\_cltv\_expiry}                        & 2\,016 blocks & \textbf{20\,160 blocks} & $\approx$ 14 days \\
+Channel funding confirmation target               & 3–6 blocks & \textbf{30–60 blocks} & $\approx$ 30–60 min \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Failure to scale these parameters would leave channel operators with a
+dangerously short penalty window — for example, Bitcoin's default
+\texttt{to\_self\_delay} of 144 blocks would grant only 2.4 hours to react
+to a cheating peer on BTCP, instead of the intended 24 hours.
+
+\newpage
+% =============================================================================
+\section{Wallet Infrastructure}
+% =============================================================================
+
+\subsection{Current State}
+
+Users may currently interact with BitcoinPurple through:
+
+\begin{itemize}[noitemsep]
+  \item \textbf{Full node wallet} (\texttt{bitcoinpurpled} built-in wallet) —
+        requires a fully synced node.
+  \item \textbf{Block explorer} —
+        \href{https://bitcoinpurple-explorer.online/}{bitcoinpurple-explorer.online}
+        for transaction and address lookup.
+\end{itemize}
+
+\subsection{Electrum SPV Wallet (Roadmap)}
+\label{ssec:electrum}
+
+A dedicated SPV wallet is under development as a fork of the
+\href{https://electrum.org}{Electrum} client.  The wallet will connect to
+ElectrumX servers over TCP port 50001 (plain) or 50002 (SSL/TLS) and will
+support all BTCP address formats:
+
+\begin{table}[h!]
+\centering
+\caption{Electrum wallet \texttt{constants.py} key parameters}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Mainnet} & \textbf{Testnet} \\
+\midrule
+\texttt{NET\_NAME}              & \texttt{"bitcoinpurple"} & \texttt{"testnet"} \\
+\texttt{ADDRTYPE\_P2PKH}        & 56  & 56 \\
+\texttt{ADDRTYPE\_P2SH}         & 55  & 55 \\
+\texttt{WIF\_PREFIX}            & 0xb7 (183) & 0xb7 (183) \\
+\texttt{SEGWIT\_HRP}            & \texttt{btcp}  & \texttt{tbtcp} \\
+\texttt{BOLT11\_HRP}            & \texttt{btcp}  & \texttt{tbtcp} \\
+\texttt{POW\_TARGET\_SPACING}   & 60  & 60 \\
+\texttt{COINBASE\_MATURITY}     & 100 & 100 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Supported derivation paths:
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{BIP} & \textbf{Script type} & \textbf{Path} \\
+\midrule
+BIP44 & P2PKH (legacy)          & \texttt{m/44'/COIN\_TYPE'/0'/\ldots} \\
+BIP49 & P2WPKH-P2SH (wrapped SW) & \texttt{m/49'/COIN\_TYPE'/0'/\ldots} \\
+BIP84 & P2WPKH (native SegWit)  & \texttt{m/84'/COIN\_TYPE'/0'/\ldots} \\
+BIP86 & P2TR (Taproot)          & \texttt{m/86'/COIN\_TYPE'/0'/\ldots} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The BIP44 coin type for BTCP is not yet registered in SLIP-0044; a
+provisional value aligned with the BTCP P2P port (13496) is used internally
+until official registration.
+
+\subsection{Dust Thresholds}
+
+BTCP uses the same dust limits as Bitcoin, since script formats are identical:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Script type} & \textbf{Dust limit} \\
+\midrule
+P2PKH            & 546 sat \\
+P2WPKH           & 294 sat \\
+P2WSH            & 330 sat \\
+P2TR (Taproot)   & 294 sat \\
+\texttt{OP\_RETURN} & 0 (unspendable) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\newpage
+% =============================================================================
+\section{Use Cases}
+% =============================================================================
+
+BitcoinPurple's combination of fast block times, low fees, and strong security
+makes it suitable for a broad range of payment scenarios:
+
+\begin{enumerate}[leftmargin=*, label=\textbf{\arabic*.}]
+  \item \textbf{Retail payments} — 1-minute confirmations enable in-store
+        payments where the customer can leave after a single on-chain
+        confirmation.
+
+  \item \textbf{Remittances} — censorship-resistant international transfers
+        with no correspondent-bank fees and near-Bitcoin security guarantees.
+
+  \item \textbf{Micropayments} — the low nominal unit price and
+        Lightning-ready infrastructure support sub-cent micropayments for
+        content, APIs, and IoT applications.
+
+  \item \textbf{Online purchases} — faster confirmation reduces cart-abandonment
+        risk for e-commerce merchants compared to 10-minute-block chains.
+
+  \item \textbf{Cross-border transactions} — permissionless global reach with
+        no restrictions based on jurisdiction, identity, or transaction size.
+
+  \item \textbf{Lightning Network instant payments (roadmap)} — once the LN
+        layer is live, payments will settle in milliseconds with fees
+        measured in fractions of a satoshi, enabling real-time streaming
+        payments and machine-to-machine commerce.
+\end{enumerate}
+
+\newpage
+% =============================================================================
+\section{Roadmap}
+\label{sec:roadmap}
+% =============================================================================
+
+\begin{table}[h!]
+\centering
+\caption{Development roadmap}
+\begin{tabularx}{\textwidth}{@{}llX@{}}
+\toprule
+\textbf{Phase} & \textbf{Status} & \textbf{Deliverable} \\
+\midrule
+\textbf{Genesis}    & \textcolor{green!60!black}{\textbf{Complete}} &
+  Full-node launch (4 Aug 2023); mainnet, testnet, signet, regtest;
+  SegWit + Taproot active from genesis. \\[4pt]
+
+\textbf{Explorer}   & \textcolor{green!60!black}{\textbf{Complete}} &
+  Public block explorer at \texttt{bitcoinpurple-explorer.online}. \\[4pt]
+
+\textbf{ElectrumX}  & \textcolor{green!60!black}{\textbf{Complete}} &
+  ElectrumX coin patch; public Electrum server infrastructure
+  (ports 50001 / 50002). \\[4pt]
+
+\textbf{Electrum Wallet} & \textcolor{orange!80!black}{\textbf{In progress}} &
+  SPV wallet fork of Electrum supporting P2PKH, SegWit, Taproot,
+  HD derivation (BIP44/49/84/86), and SLIP-0132 extended keys. \\[4pt]
+
+\textbf{Lightning Network} & \textcolor{orange!80!black}{\textbf{Planned}} &
+  LN node fork (CLN or LND) with BTCP chain parameters,
+  scaled block-count timeouts (\S\ref{sec:roadmap}), BOLT11 \texttt{btcp} HRP,
+  and DNS bootstrap seed infrastructure. \\[4pt]
+
+\textbf{SLIP-0044 Registration} & \textcolor{orange!80!black}{\textbf{Planned}} &
+  Official coin-type registration for BTCP to ensure wallet
+  interoperability. \\[4pt]
+
+\textbf{Exchange Listings} & \textcolor{gray}{\textbf{Future}} &
+  Listing on cryptocurrency exchanges to provide market liquidity. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\newpage
+% =============================================================================
+\section{Team and Governance}
+% =============================================================================
+
+\subsection{Core Team}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Name} & \textbf{Role} \\
+\midrule
+Alym Wehrli   & Founder \\
+Davide Grilli & Developer \& Maintainer \\
+Maurito83     & Community Manager \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Governance Model}
+
+BitcoinPurple follows a community-driven governance model in the spirit of
+open-source Bitcoin development.  Protocol changes are discussed openly in the
+community Telegram group
+(\href{https://t.me/+o3I0A1q1W29mMmQ0}{t.me/+o3I0A1q1W29mMmQ0}) and, once
+community consensus is reached, are implemented by the core developers and
+released under the project's open-source licence.
+
+Key principles:
+\begin{itemize}[noitemsep]
+  \item \textbf{Transparency} — all code changes are published publicly on
+        GitHub before activation.
+  \item \textbf{Community input} — major protocol decisions are discussed
+        in the Telegram community before any implementation begins.
+  \item \textbf{Miner signalling} — soft-fork activations require 90\%
+        (108\,/\,120 blocks) miner signalling within the retarget window.
+  \item \textbf{No premine / no ICO} — there are no founders' tokens,
+        investor allocations, or pre-sold coins; every BTCP in existence was
+        earned through mining.
+\end{itemize}
+
+\newpage
+% =============================================================================
+\section{Security Considerations}
+% =============================================================================
+
+\subsection{51\% Attack Resistance}
+
+As a young SHA-256d network, BitcoinPurple shares its proof-of-work algorithm
+with Bitcoin.  This is a deliberate security trade-off: ASIC hardware developed
+for Bitcoin can also mine BTCP, which expands the accessible miner base.
+However, as hashrate grows, the cost of a 51\% attack increases proportionally.
+The project encourages mining participation to strengthen network security.
+
+\subsection{Short Block Interval and Orphan Rate}
+
+1-minute blocks produce a higher orphan rate than 10-minute blocks if network
+propagation latency is non-negligible relative to the block interval.  Compact
+block relay (BIP152, inherited from Bitcoin Core) mitigates this by propagating
+only missing transactions after a block header is announced, reducing propagation
+time to well under one second on modern infrastructure.
+
+\subsection{Lightning Network Safety}
+
+As documented in Section~5.3, LN timeout parameters \emph{must} be scaled for
+BTCP's 1-minute block cadence.  Using unmodified Bitcoin LN defaults on BTCP
+would reduce the justice window from 24 hours to 2.4 hours — an unacceptable
+security degradation.  The official BTCP LN fork will ship with correct scaled
+defaults.
+
+\subsection{Coinbase Maturity}
+
+Mining rewards require 100 blocks (\(\approx\)100 minutes) before they can be
+spent.  This provides protection against chain reorganisations invalidating
+recently mined rewards.
+
+\newpage
+% =============================================================================
+\section{Conclusion}
+% =============================================================================
+
+BitcoinPurple represents a carefully considered evolution of the Bitcoin
+protocol, optimised for the everyday payment use case without sacrificing the
+core properties — decentralisation, censorship-resistance, and verifiable
+scarcity — that give Bitcoin its value.
+
+The key design decisions are mutually reinforcing:
+\begin{itemize}[noitemsep]
+  \item SHA-256d PoW preserves compatibility with the world's largest pool of
+        dedicated mining hardware.
+  \item 1-minute blocks dramatically reduce confirmation latency for end users.
+  \item 120-block difficulty retarget keeps the network stable under volatile
+        hashrate without compromising security.
+  \item A hard cap of 1\,000\,000 BTCP, with no premine, ensures that no single
+        party holds a structural advantage.
+  \item Native Taproot and Lightning readiness from genesis position BTCP for
+        a second-layer ecosystem without requiring a contentious soft-fork
+        campaign later.
+\end{itemize}
+
+With the full-node software stable, an ElectrumX indexing layer deployed, and
+an Electrum SPV wallet and Lightning Network implementation actively in
+development, BitcoinPurple is progressing toward its vision of a fast,
+accessible, and secure global payment network.
+
+The community is invited to participate in development discussions on Telegram
+(\href{https://t.me/+o3I0A1q1W29mMmQ0}{t.me/+o3I0A1q1W29mMmQ0}),
+to run a full node, and to contribute to the open-source codebase.
+
+\vspace{1cm}
+\begin{center}
+\textit{``Global transactions for everyone around the world.''}\\
+{\small — BitcoinPurple genesis coinbase message}
+\end{center}
+
+\newpage
+% =============================================================================
+\appendix
+\section{Network Parameter Reference}
+% =============================================================================
+
+\subsection{Quick Reference}
+
+\begin{table}[h!]
+\centering
+\caption{Network parameters across all chain modes}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Parameter} & \textbf{Mainnet} & \textbf{Testnet} & \textbf{Signet} & \textbf{Regtest} \\
+\midrule
+P2P port          & 13496 & 23496 & 33496 & 18444 \\
+RPC port          & 13495 & 23495 & 33495 & 18443 \\
+ElectrumX TCP     & 50001 & 60001 & — & — \\
+ElectrumX SSL     & 50002 & 60002 & — & — \\
+P2PKH prefix      & 56    & 56    & 56  & 56 \\
+P2SH prefix       & 55    & 55    & 55  & 55 \\
+WIF prefix        & 183   & 183   & 183 & 183 \\
+Bech32 HRP        & \texttt{btcp} & \texttt{tbtcp} & \texttt{tbtcp} & \texttt{rbtcp} \\
+Block time        & 60 s  & 60 s  & 60 s & instant \\
+Halving interval  & 500\,000 & — & — & 150 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Magic Bytes}
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Network} & \textbf{Magic} \\
+\midrule
+Mainnet  & \texttt{fc 99 13 95} \\
+Testnet  & \texttt{29 fb c5 fe} \\
+Regtest  & \texttt{31 34 6a c9} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Genesis Block Hashes}
+
+\begin{center}
+\begin{tabular}{@{}lp{10cm}@{}}
+\toprule
+\textbf{Network} & \textbf{Genesis hash (display)} \\
+\midrule
+Mainnet & {\small\ttfamily\seqsplit{000003823fbf82ea4906cbe214617ce7a70a5da29c19ecb1d65618bcf04ec015}} \\
+Testnet & {\small\ttfamily\seqsplit{000002fdc3921c1ad368816fcc587f499698d42b42ab5a5d94ee67882ef9d998}} \\
+Signet  & {\small\ttfamily\seqsplit{00000131aa3124412b7ba8473f137922692c88da8fe26042e250c6cd76b7b403}} \\
+Regtest & {\small\ttfamily\seqsplit{6f6ffbda4cb789c69d885d4624ea4a28841d3689fbaf969262150ca45a1ae1df}} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{DNS Seeds}
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Host} & \textbf{Network} \\
+\midrule
+\texttt{node3.walletbuilders.com} & Mainnet \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Full Node Default Values}
+
+\begin{table}[h!]
+\centering
+\caption{bitcoinpurpled compile-time defaults}
+\begin{tabular}{@{}lrl@{}}
+\toprule
+\textbf{Parameter} & \textbf{Default} & \textbf{Source} \\
+\midrule
+\texttt{dbcache}        & 450 MiB    & \texttt{src/txdb.h:30} \\
+\texttt{maxmempool}     & 300 MB     & \texttt{src/kernel/mempool\_options.h:20} \\
+\texttt{mempoolexpiry}  & 336 h      & \texttt{src/kernel/mempool\_options.h:24} \\
+\texttt{blockmaxweight} & 3\,996\,000 wu & \texttt{src/policy/policy.h:23} \\
+\texttt{rpcthreads}     & 4          & \texttt{src/httpserver.h:12} \\
+\texttt{rpcworkqueue}   & 16         & \texttt{src/httpserver.h:13} \\
+\texttt{rpcservertimeout} & 30 s     & \texttt{src/httpserver.h:14} \\
+\texttt{maxconnections} & 125        & \texttt{src/net.h} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% =============================================================================
+\section{Legal Disclaimer}
+% =============================================================================
+
+This whitepaper has been prepared for informational purposes only and does not
+constitute an offer to sell, a solicitation of an offer to buy, or a
+recommendation regarding any security or other financial instrument.
+BitcoinPurple (BTCP) is a decentralised, open-source software project.
+
+\textbf{No guarantee of value.}  Participation in any cryptocurrency project
+involves significant risk, including the risk of total loss of any funds used
+to acquire tokens.  The value of BTCP may fluctuate and could decline to zero.
+
+\textbf{No financial advice.}  Nothing in this document should be construed as
+investment, legal, tax, or financial advice.  Readers should conduct their own
+research and consult qualified professionals before making any financial
+decisions.
+
+\textbf{Forward-looking statements.}  This document contains forward-looking
+statements regarding the project's roadmap and future development.  Actual
+results may differ materially from those expressed or implied.  The authors
+assume no obligation to update forward-looking statements.
+
+\textbf{Open-source software.}  The BitcoinPurple software is provided ``as
+is'', without warranty of any kind.  Users run nodes and wallets at their own
+risk.
+
+\vfill
+\begin{center}
+{\small
+\textbf{BitcoinPurple (BTCP)} \quad|\quad
+\href{https://bitcoinpurpleblockchain.com/}{bitcoinpurpleblockchain.com} \quad|\quad
+\href{https://bitcoinpurple-explorer.online/}{bitcoinpurple-explorer.online}\\[4pt]
+Telegram: \href{https://t.me/+o3I0A1q1W29mMmQ0}{t.me/+o3I0A1q1W29mMmQ0}\\[8pt]
+\textit{May 2026}
+}
+\end{center}
+
+\end{document}
