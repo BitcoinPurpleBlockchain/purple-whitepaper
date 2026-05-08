@@ -4,8 +4,8 @@
 
 Source files for the official BitcoinPurple (BTCP) whitepaper, written in LaTeX.
 
-- **Website:** [bitcoinpurpleblockchain.com](https://bitcoinpurpleblockchain.com/)
-- **Explorer:** [bitcoinpurple-explorer.online](https://bitcoinpurple-explorer.online/)
+- **Website:** [bitcoinpurplechain.com](https://bitcoinpurplechain.com/)
+- **Explorer:** [bitcoinpurple-explorer.store](https://bitcoinpurple-explorer.store/)
 - **Community:** [Telegram](https://t.me/+o3I0A1q1W29mMmQ0)
 
 ---
